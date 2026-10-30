@@ -1,0 +1,42 @@
+name: Build TVDesk APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'TVDesk-phase1.zip'
+      - '.github/workflows/android.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Extract project
+        run: unzip -q TVDesk-phase1.zip
+
+      - name: Build APK
+        run: |
+          chmod +x TVDesk/gradlew
+          ./TVDesk/gradlew -p TVDesk :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TVDesk-APK
+          path: TVDesk/app/build/outputs/apk/debug/app-debug.apk
