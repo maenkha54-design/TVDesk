@@ -32,6 +32,11 @@ jobs:
 
       - name: Extract project
         run: unzip -q TVDesk-phase1.zip
+      - name: Fix clock attributes
+        run: |
+          sed -i 's/android:format12Hr/android:format12Hour/g; s/android:format24Hr/android:format24Hour/g' TVDesk/app/src/main/res/layout/taskbar.xml
+
+        
 
       - name: Build APK
         run: |
